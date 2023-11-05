@@ -1,43 +1,52 @@
-# Structure for an item which stores weight and
-# corresponding value of Item
-class Item:
-	def __init__(self, profit, weight):
-		self.profit = profit
-		self.weight = weight
+def fractional_knapsack(value, weight, capacity):
+    index = list(range(len(value)))
+    ratio = [v / w for v, w in zip(value, weight)]
+    index.sort(key=lambda i: ratio[i], reverse=True)
 
-# Main greedy function to solve problem
-def fractionalKnapsack(W, arr):
+    max_value = 0
+    fractions = [0] * len(value)
 
-	# Sorting Item on basis of ratio
-	arr.sort(key=lambda x: (x.profit/x.weight), reverse=True) 
+    for i in index:
+        if weight[i] <= capacity:
+            fractions[i] = 1
+            max_value += value[i]
+            capacity -= weight[i]
+        else:
+            fractions[i] = capacity / weight[i]
+            max_value += value[i] * (capacity / weight[i])
+            break
 
-	# Result(value in Knapsack)
-	finalvalue = 0.0
+    return max_value, fractions
 
-	# Looping through all Items
-	for item in arr:
+n = int(input("Enter number of items: "))
+value = list(map(int, input("Enter the values of the items separated by space: ").split()))
+weight = list(map(int, input("Enter the positive weights of the items separated by space: ").split()))
+capacity = int(input("Enter maximum weight: "))
 
-		# If adding Item won't overflow, 
-		# add it completely
-		if item.weight <= W:
-			W -= item.weight
-			finalvalue += item.profit
-
-		# If we can't add current Item, 
-		# add fractional part of it
-		else:
-			finalvalue += item.profit * W / item.weight
-			break
-	
-	# Returning final value
-	return finalvalue
+max_value, fractions = fractional_knapsack(value, weight, capacity)
+print('The maximum value of items that can be carried:', max_value)
+print('The fractions in which the items should be taken:',fractions)
 
 
-# Driver Code
-if __name__ == "__main__":
-	W = 50
-	arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+--------------------------------------------------------------------------------------------------------------------------------------
+class item:
+    def __init__(self,profit,weight):
+        self.profit=profit
+        self.weight=weight
+def fractionalKnapsack(w,arr):
+    arr.sort(key=lambda x:(x.profit/x.weight),reverse=True)
+    finalVal=0.0
+    for item in arr:
+        if item.weight<=w:
+            w-=item.weight
+            finalVal+=item.profit
+        else:
+            finalVal+=item.profit*w/item.weight
+            break
+    return finalVal
+if __name__=="__main__":
+    w=50
+    arr=[item(60,10),item(100,20),item(120,30)]
+    max_val=fractionalKnapsack(w,arr)
+    print(max_val)
 
-	# Function call
-	max_val = fractionalKnapsack(W, arr)
-	print(max_val)
