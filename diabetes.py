@@ -90,7 +90,7 @@ print("Recall score ",metrics.recall_score(y_test,y_pred))
 
 
 print("Classification report",metrics.classification_report(y_test,y_pred))
-
+ConfusionMatrixDisplay.from_predictions(y_test,y_pred)
 
 # In[ ]:
 
