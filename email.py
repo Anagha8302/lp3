@@ -109,7 +109,11 @@ for model_name, model in models.items():
 
 
 df.describe()
-
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Mean Absolute % Error:', metrics.mean_absolute_percentage_error(y_test, y_pred))
+print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+print('R Squared (R²):', np.sqrt(metrics.r2_score(y_test, y_pred)))
 
 # In[ ]:
 
