@@ -1,53 +1,43 @@
 class Item:
-    def __init__(self, value, weight):
-        self.value = value
+    def __init__(self, weight, value):
         self.weight = weight
+        self.value = value
 
-def knapsack_bb(values, weights, capacity):
-    n = len(values)
-    items = [Item(values[i], weights[i]) for i in range(n)]
-
-    def bound(node, capacity, value, weight):
+def knapsack_branch_and_bound(items, capacity):
+    def bound(i, weight, value):
         if weight > capacity:
             return 0
-        bound = value
-        j = node + 1
+        bound_value = value
+        j = i
         total_weight = weight
         while j < n and total_weight + items[j].weight <= capacity:
-            bound += items[j].value
             total_weight += items[j].weight
+            bound_value += items[j].value
             j += 1
         if j < n:
-            bound += (capacity - total_weight) * (items[j].value / items[j].weight)
-        return bound
+            bound_value += (capacity - total_weight) * (items[j].value / items[j].weight)
+        return bound_value
 
-    def knapsack_recursive(node, capacity, value, weight):
+    def knapsack_recursive(i, weight, value):
         nonlocal max_value
-        if weight > capacity:
-            return
-
-        if value > max_value:
+        if weight <= capacity and value > max_value:
             max_value = value
+        if i < n:
+            if weight + items[i].weight <= capacity:
+                knapsack_recursive(i + 1, weight + items[i].weight, value + items[i].value)
+            if bound(i + 1, weight, value) > max_value:
+                knapsack_recursive(i + 1, weight, value)
 
-        if node == n:
-            return
-
-        if bound(node, capacity, value, weight) <= max_value:
-            return
-
-        knapsack_recursive(node + 1, capacity, value, weight)
-
-        knapsack_recursive(node + 1, capacity - items[node].weight, value + items[node].value, weight + items[node].weight)
-
+    n = len(items)
     max_value = 0
-    knapsack_recursive(0, capacity, 0, 0)
+    items.sort(key=lambda x: x.value / x.weight, reverse=True)
+    knapsack_recursive(0, 0, 0)
     return max_value
 
-# Example usage:
+# Example usage
 if __name__ == "__main__":
-    values = [60, 100, 120]
-    weights = [10, 20, 30]
+    items = [Item(10, 60), Item(20, 100), Item(30, 120)]
     capacity = 50
 
-    max_value = knapsack_bb(values, weights, capacity)
-    print("Maximum value:", max_value)
+    max_value = knapsack_branch_and_bound(items, capacity)
+    print("Maximum value in the knapsack:", max_value)
